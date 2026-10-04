@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createOrder, verifyPayment } from "./actions";
 import Script from "next/script";
-import { MapPin, CreditCard, Banknote, ArrowLeft, Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { MapPin, CreditCard, Banknote, ArrowLeft, Loader2, CheckCircle2, XCircle, QrCode } from "lucide-react";
 import Link from "next/link";
 
 export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, userId: string }) {
@@ -17,6 +17,7 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
   const [isMounted, setIsMounted] = useState(false);
   const [orderState, setOrderState] = useState<"idle" | "placing" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [completedOrderId, setCompletedOrderId] = useState<string | null>(null);
   
   const [paymentMethod, setPaymentMethod] = useState<"COD" | "ONLINE">("ONLINE");
   const [address, setAddress] = useState({
@@ -35,13 +36,13 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
   }, [items, router, userId, syncUser, orderState]);
 
   useEffect(() => {
-    if (orderState === "success") {
+    if (orderState === "success" && completedOrderId) {
       const timer = setTimeout(() => {
-        router.push("/");
+        router.push(`/orders/${completedOrderId}`);
       }, 4000);
       return () => clearTimeout(timer);
     }
-  }, [orderState, router]);
+  }, [orderState, router, completedOrderId]);
 
   if (!isMounted || (items.length === 0 && orderState === "idle")) return null;
 
@@ -66,6 +67,7 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
       });
 
       if (orderRes.method === "COD") {
+        setCompletedOrderId(orderRes.orderId);
         setOrderState("success");
         clearCart();
         return;
@@ -91,6 +93,7 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
                 razorpaySignature: response.razorpay_signature,
               });
               
+              setCompletedOrderId(orderRes.orderId);
               setOrderState("success");
               clearCart();
             } catch (error: any) {
@@ -105,6 +108,28 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
           },
           theme: {
             color: "#16a34a"
+          },
+          config: {
+            display: {
+              blocks: {
+                upi: {
+                  name: "Pay via UPI (PhonePe, GPay)",
+                  instruments: [
+                    { method: "upi" }
+                  ],
+                },
+                other: {
+                  name: "Other Payment Methods",
+                  instruments: [
+                    { method: "card" },
+                    { method: "netbanking" },
+                    { method: "wallet" }
+                  ]
+                }
+              },
+              sequence: ["block.upi", "block.other"],
+              preferences: { show_default_blocks: false }
+            }
           }
         };
 
@@ -173,16 +198,22 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <label className={`cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center justify-center gap-3 transition-all ${paymentMethod === 'ONLINE' ? 'border-primary bg-primary/5 text-primary' : 'border-zinc-200 hover:border-zinc-300'}`}>
+              <label className={`cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center justify-center gap-3 transition-all ${paymentMethod === 'ONLINE' ? 'border-green-500 bg-green-50 text-green-700' : 'border-zinc-200 hover:border-zinc-300'}`}>
                 <input type="radio" name="payment" className="sr-only" checked={paymentMethod === 'ONLINE'} onChange={() => setPaymentMethod('ONLINE')} />
-                <CreditCard className={`h-8 w-8 ${paymentMethod === 'ONLINE' ? 'text-primary' : 'text-zinc-400'}`} />
-                <span className="font-bold">Pay Online (Razorpay)</span>
+                <QrCode className={`h-8 w-8 ${paymentMethod === 'ONLINE' ? 'text-green-600' : 'text-zinc-400'}`} />
+                <div className="text-center">
+                  <span className="font-bold block text-[15px]">Pay via UPI or Cards</span>
+                  <span className="text-xs font-medium text-zinc-500 block mt-1">(GPay, PhonePe, Paytm, Visa)</span>
+                </div>
               </label>
               
-              <label className={`cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center justify-center gap-3 transition-all ${paymentMethod === 'COD' ? 'border-primary bg-primary/5 text-primary' : 'border-zinc-200 hover:border-zinc-300'}`}>
+              <label className={`cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center justify-center gap-3 transition-all ${paymentMethod === 'COD' ? 'border-orange-500 bg-orange-50 text-orange-700' : 'border-zinc-200 hover:border-zinc-300'}`}>
                 <input type="radio" name="payment" className="sr-only" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} />
-                <Banknote className={`h-8 w-8 ${paymentMethod === 'COD' ? 'text-primary' : 'text-zinc-400'}`} />
-                <span className="font-bold">Cash on Delivery</span>
+                <Banknote className={`h-8 w-8 ${paymentMethod === 'COD' ? 'text-orange-600' : 'text-zinc-400'}`} />
+                <div className="text-center">
+                  <span className="font-bold block text-[15px]">Cash on Delivery</span>
+                  <span className="text-xs font-medium text-zinc-500 block mt-1">(Pay cash to rider)</span>
+                </div>
               </label>
             </div>
           </section>

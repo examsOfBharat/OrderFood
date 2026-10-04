@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Minus, Plus, Trash2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -23,21 +23,23 @@ export function CartDrawer() {
 
   if (!isMounted) {
     return (
-      <Button variant="outline" size="icon" className="relative">
-        <ShoppingCart className="h-5 w-5" />
-      </Button>
+      <button className="relative flex items-center text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors">
+        <ShoppingBag className="w-6 h-6" />
+      </button>
     );
   }
 
   return (
     <Sheet>
-      <SheetTrigger render={<Button variant="outline" size="icon" className="relative" />}>
-        <ShoppingCart className="h-5 w-5" />
-        {totalItems > 0 && (
-          <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
-            {totalItems}
-          </span>
-        )}
+      <SheetTrigger asChild>
+        <button className="relative flex items-center text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer">
+          <ShoppingBag className="w-6 h-6" />
+          {totalItems > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[10px] font-black w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
+              {totalItems}
+            </span>
+          )}
+        </button>
       </SheetTrigger>
       <SheetContent className="flex w-full flex-col sm:max-w-md p-6 bg-background shadow-2xl border-l">
         <SheetHeader className="px-0 pb-4 border-b">

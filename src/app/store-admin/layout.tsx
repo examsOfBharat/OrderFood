@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { Store, UtensilsCrossed, Settings, LogOut, Package } from "lucide-react";
+import { Store, UtensilsCrossed, Settings, LogOut, Package, Home } from "lucide-react";
 
 export default function StoreAdminLayout({
   children,
@@ -23,6 +23,13 @@ export default function StoreAdminLayout({
               href="/store-admin"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
             >
+              <Home className="h-4 w-4" />
+              Dashboard Home
+            </Link>
+            <Link
+              href="/store-admin/settings"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
+            >
               <Settings className="h-4 w-4" />
               Store Profile
             </Link>
@@ -38,7 +45,7 @@ export default function StoreAdminLayout({
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted"
             >
               <Package className="h-4 w-4" />
-              Orders (Phase 4)
+              Orders Management
             </Link>
           </nav>
         </div>

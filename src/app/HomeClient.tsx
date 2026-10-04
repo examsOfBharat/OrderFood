@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Search, Star, Clock, Percent } from "lucide-react";
-import { useState } from "react";
 
 export function HomeClient({ stores }: { stores: any[] }) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams?.get("q") || "";
 
   const filteredStores = stores.filter(store => 
     store.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -32,19 +33,7 @@ export function HomeClient({ stores }: { stores: any[] }) {
             Order food & groceries. <span className="text-zinc-500 block sm:inline mt-2 sm:mt-0">Discover the best.</span>
           </h1>
           
-          <div className="max-w-2xl mx-auto relative group">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-zinc-400 group-focus-within:text-orange-500 transition-colors" />
-            </div>
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-14 md:h-16 pl-12 pr-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-[17px] font-medium text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
-              placeholder="Search for restaurant"
-            />
-          </div>
-          
+
         </div>
       </section>
 

@@ -94,3 +94,31 @@ export async function sendOrderNotifications(orderId: string) {
     console.error("Notification Error:", error);
   }
 }
+
+export async function sendStatusUpdateEmail(orderId: string, status: string) {
+  try {
+    await connectDB();
+    const order = await Order.findById(orderId).populate("customer");
+    if (!order) return;
+    const customer = order.customer as any;
+    
+    if (customer?.email) {
+      let statusText = "";
+      if (status === "cancelled") statusText = "has been cancelled by the store.";
+      if (status === "out_for_delivery") statusText = "has been dispatched and is on its way to you!";
+      if (status === "accepted") statusText = "has been accepted and is being prepared.";
+
+      const htmlMessage = `<h2>Order Update</h2><p>Your order (ID: ${order._id}) ${statusText}</p>`;
+      
+      transporter.sendMail({
+        from: '"LocalBites" <no-reply@localbites.com>',
+        to: customer.email,
+        subject: `Order Update - ${order._id}`,
+        html: htmlMessage,
+      }).catch(err => console.error("Customer Email Error:", err));
+    }
+  } catch (error) {
+    console.error("Status Update Notification Error:", error);
+  }
+}
+

@@ -22,49 +22,7 @@ export default async function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white dark:bg-black font-sans selection:bg-orange-500/30">
-      {/* Sleek Header */}
-      <header className="sticky top-0 z-50 w-full bg-white dark:bg-black border-b border-zinc-100 dark:border-zinc-900 shadow-sm">
-        <div className="container mx-auto flex h-[72px] items-center justify-between px-4 lg:px-8">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2 font-black text-2xl md:text-3xl tracking-tighter text-zinc-900 dark:text-white">
-              LocalBites
-            </Link>
-            
-            <div className="hidden md:flex items-center gap-2 text-sm font-bold text-zinc-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer group">
-              <MapPin className="h-4 w-4 text-orange-500" />
-              <span className="border-b-2 border-zinc-800 dark:border-white group-hover:border-orange-500 transition-colors">Your Location</span>
-              <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-orange-500" />
-            </div>
-          </div>
 
-          <nav className="flex items-center gap-4">
-            {session?.user ? (
-              <>
-                <span className="text-[15px] font-bold hidden md:inline-block text-zinc-800 dark:text-zinc-200">
-                  {session.user.name}
-                </span>
-                {(session.user as any).role === "store_owner" && (
-                  <Link href="/store-admin" className="text-[15px] font-bold text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors">
-                    Dashboard
-                  </Link>
-                )}
-                <form action={async () => { "use server"; await signOut(); }}>
-                  <Button type="submit" variant="ghost" className="font-bold text-[15px] text-zinc-600 hover:text-black dark:hover:text-white">Logout</Button>
-                </form>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="text-[15px] font-bold text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors hidden sm:block">
-                  Log in
-                </Link>
-                <Link href="/register" className="text-[15px] font-bold text-white bg-black dark:bg-white dark:text-black px-5 py-2.5 rounded-full hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors">
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
 
         <HomeClient stores={stores} />
       
