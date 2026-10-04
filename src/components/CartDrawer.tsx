@@ -31,15 +31,13 @@ export function CartDrawer() {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <button className="relative flex items-center text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer">
-          <ShoppingBag className="w-6 h-6" />
-          {totalItems > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[10px] font-black w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
-              {totalItems}
-            </span>
-          )}
-        </button>
+      <SheetTrigger className="relative flex items-center text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer">
+        <ShoppingBag className="w-6 h-6" />
+        {totalItems > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[10px] font-black w-4 h-4 flex items-center justify-center rounded-full shadow-sm">
+            {totalItems}
+          </span>
+        )}
       </SheetTrigger>
       <SheetContent className="flex w-full flex-col sm:max-w-md p-6 bg-background shadow-2xl border-l">
         <SheetHeader className="px-0 pb-4 border-b">
