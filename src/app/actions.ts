@@ -11,8 +11,29 @@ export async function signOutAction() {
 
 export async function getActiveStores() {
   await connectDB();
-  const stores = await Store.find({}).lean();
-  return JSON.parse(JSON.stringify(stores));
+  // Show all stores except suspended ones
+  // (stores default to "pending" status until admin approves, we still show them)
+  const stores = await Store.find({ status: { $ne: "suspended" } }).lean();
+
+  // For each store, fetch category names + menu item names for richer search
+  const enriched = await Promise.all(
+    stores.map(async (store: any) => {
+      const categories = await Category.find({ store: store._id })
+        .select("name")
+        .lean();
+      const menuItems = await MenuItem.find({ store: store._id, isAvailable: true })
+        .select("name")
+        .limit(30)
+        .lean();
+      return {
+        ...store,
+        cuisines: categories.map((c: any) => c.name),
+        menuPreview: menuItems.map((m: any) => m.name),
+      };
+    })
+  );
+
+  return JSON.parse(JSON.stringify(enriched));
 }
 
 export async function getStoreBySlug(slug: string) {

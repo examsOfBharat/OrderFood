@@ -12,13 +12,18 @@ import { sendOrderNotifications } from "@/lib/notifications";
 
 // Helper function to get Razorpay instance
 function getRazorpayInstance() {
-  const key_id = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "";
+  const key_id = process.env.RAZORPAY_KEY_ID || "";
   const key_secret = process.env.RAZORPAY_KEY_SECRET || "";
-  
+
   if (!key_id || !key_secret) {
     throw new Error("Razorpay API keys are missing in .env file");
   }
-  
+
+  // Safety check: warn if using test keys in production
+  if (key_id.startsWith("rzp_test_")) {
+    console.warn("⚠️  WARNING: You are using Razorpay TEST keys. Real UPI payments will fail verification. Switch to LIVE keys.");
+  }
+
   return new Razorpay({ key_id, key_secret });
 }
 
@@ -147,34 +152,61 @@ export async function verifyPayment(data: {
   razorpaySignature: string;
 }) {
   await connectDB();
-  
+
   const secret = process.env.RAZORPAY_KEY_SECRET || "";
-  
-  // Verify signature
+  const keyId = process.env.RAZORPAY_KEY_ID || "";
+
+  if (!secret) {
+    throw new Error("RAZORPAY_KEY_SECRET is not set in environment variables.");
+  }
+
+  // Warn about test keys being used for real payments
+  if (keyId.startsWith("rzp_test_")) {
+    console.warn("⚠️  RAZORPAY: Using TEST keys. If this is a live payment, verification will fail. Update .env with your LIVE keys from Razorpay Dashboard.");
+  }
+
+  // Compute expected HMAC signature
   const generatedSignature = crypto
     .createHmac("sha256", secret)
     .update(data.razorpayOrderId + "|" + data.razorpayPaymentId)
     .digest("hex");
 
-  if (generatedSignature !== data.razorpaySignature) {
-    throw new Error("Payment verification failed. Invalid signature.");
-  }
-
-  // Update order
+  // Find order first
   const order = await Order.findById(data.orderId);
   if (!order) throw new Error("Order not found");
 
+  // If webhook already confirmed this payment, accept it
+  if (order.paymentStatus === "paid") {
+    console.log(`✅ Order ${data.orderId} was already confirmed by webhook. Skipping client-side verification.`);
+    return { success: true, confirmedBy: "webhook" };
+  }
+
+  if (generatedSignature !== data.razorpaySignature) {
+    console.error("❌ Razorpay Signature Mismatch!");
+    console.error("  Key ID in use:", keyId);
+    console.error("  Is test key:", keyId.startsWith("rzp_test_"));
+    console.error("  Expected:", generatedSignature);
+    console.error("  Received:", data.razorpaySignature);
+    console.error("  ACTION REQUIRED: If your Razorpay account is now live-approved, update RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env with your LIVE keys.");
+    throw new Error(
+      keyId.startsWith("rzp_test_")
+        ? "Payment verification failed: You are using TEST API keys but a real payment was made. Please update your .env with LIVE Razorpay keys from your dashboard."
+        : "Payment signature verification failed. Please contact support."
+    );
+  }
+
+  // Mark order as paid
   order.paymentStatus = "paid";
   order.orderStatus = "placed";
   order.razorpayPaymentId = data.razorpayPaymentId;
   order.razorpaySignature = data.razorpaySignature;
-  
+
   await order.save();
-  
+
   // Trigger notifications asynchronously
   sendOrderNotifications(data.orderId);
 
-  return { success: true };
+  return { success: true, confirmedBy: "client" };
 }
 
 export async function getUserAddress() {

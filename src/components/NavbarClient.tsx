@@ -80,7 +80,7 @@ export function NavbarClient({ session }: { session: any }) {
             {/* ── LOGO ── */}
             <Link href="/" className="shrink-0 flex items-center gap-2.5 group">
               <div className="w-9 h-9 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-md shadow-orange-500/25 group-hover:scale-105 transition-transform duration-200">
-                <span className="text-base">🍔</span>
+                <span className="text-base">🛵</span>
               </div>
               <span className="font-black text-[1.4rem] tracking-tighter text-zinc-900 dark:text-white">
                 <span className="text-orange-500">Local</span>Bites
@@ -220,8 +220,9 @@ export function NavbarClient({ session }: { session: any }) {
 
             {/* Drawer header */}
             <div className="flex items-center justify-between px-5 h-16 border-b border-zinc-100 dark:border-zinc-800 shrink-0">
-              <span className="font-black text-lg tracking-tighter text-zinc-900 dark:text-white">
-                <span className="text-orange-500">Local</span>Bites
+              <span className="font-black text-lg tracking-tighter text-zinc-900 dark:text-white flex items-center gap-2">
+                <span className="text-xl">🛵</span>
+                <span><span className="text-orange-500">Local</span>Bites</span>
               </span>
               <button
                 onClick={() => setMobileMenuOpen(false)}

@@ -85,20 +85,27 @@ export function CheckoutClient({ savedAddress, userId }: { savedAddress?: any, u
           handler: async function (response: any) {
             try {
               setOrderState("placing");
-              // 3. Verify Payment
-              await verifyPayment({
+              // 3. Verify Payment on server
+              const result = await verifyPayment({
                 orderId: orderRes.orderId,
                 razorpayPaymentId: response.razorpay_payment_id,
                 razorpayOrderId: response.razorpay_order_id,
                 razorpaySignature: response.razorpay_signature,
               });
-              
+
               setCompletedOrderId(orderRes.orderId);
               setOrderState("success");
               clearCart();
             } catch (error: any) {
+              // Payment went through on Razorpay but our server couldn't verify.
+              // This usually means TEST keys are being used for a LIVE payment.
+              // The webhook will auto-confirm it if RAZORPAY_WEBHOOK_SECRET is set.
               setOrderState("error");
-              setErrorMessage(`Verification Failed: ${error.message}`);
+              setErrorMessage(
+                error.message?.includes("TEST API keys")
+                  ? "⚠️ Your Razorpay account is now LIVE but your server still has TEST keys. Please update RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your .env file with your Live keys from the Razorpay Dashboard. Your payment may have been deducted — check your Razorpay dashboard."
+                  : `Verification failed: ${error.message}. If money was deducted, please check your Orders page or contact support.`
+              );
             }
           },
           prefill: {

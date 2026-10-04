@@ -86,7 +86,7 @@ export default function RegisterPage() {
           {/* Logo */}
           <div className="flex items-center gap-3 mb-8 lg:mb-12">
             <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-orange-600/40 -rotate-6 hover:rotate-0 transition-transform duration-300 shrink-0">
-              <span className="text-2xl">🍔</span>
+              <span className="text-2xl">🛵</span>
             </div>
             <span className="text-2xl lg:text-3xl font-black tracking-tighter text-white">
               <span className="text-orange-400">Local</span>Bites

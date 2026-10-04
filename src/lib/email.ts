@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendVerificationEmail(to: string, otp: string) {
   const mailOptions = {
-    from: `"LocalBites 🍔" <${process.env.EMAIL_USER}>`,
+    from: `"LocalBites 🛵" <${process.env.EMAIL_USER}>`,
     to,
     subject: "Your LocalBites Verification Code",
     html: `
@@ -31,7 +31,7 @@ export async function sendVerificationEmail(to: string, otp: string) {
                   <tr>
                     <td style="background: linear-gradient(135deg, #ea580c, #dc2626); padding: 36px 40px; text-align:center;">
                       <div style="display:inline-block; background:rgba(255,255,255,0.15); border-radius:16px; padding: 14px 20px;">
-                        <span style="font-size:32px;">🍔</span>
+                        <span style="font-size:32px;">🛵</span>
                       </div>
                       <h1 style="margin:16px 0 0; color:#ffffff; font-size:28px; font-weight:900; letter-spacing:-1px;">LocalBites</h1>
                       <p style="margin:6px 0 0; color:rgba(255,255,255,0.8); font-size:14px;">Email Verification</p>

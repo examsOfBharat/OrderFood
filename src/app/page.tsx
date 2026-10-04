@@ -42,18 +42,18 @@ export default async function Home() {
             <div className="flex gap-16">
               <div className="space-y-4">
                 <h4 className="font-black text-zinc-900 dark:text-white text-lg">Company</h4>
-                <ul className="space-y-3 font-medium text-[15px] text-zinc-500">
-                  <li className="hover:text-black dark:hover:text-white cursor-pointer transition-colors">About</li>
-                  <li className="hover:text-black dark:hover:text-white cursor-pointer transition-colors">Careers</li>
-                  <li className="hover:text-black dark:hover:text-white cursor-pointer transition-colors">Team</li>
+                <ul className="space-y-3 font-medium text-[15px] text-zinc-500 flex flex-col">
+                  <li><Link href="/about" className="hover:text-black dark:hover:text-white transition-colors">About</Link></li>
+                  <li><Link href="/careers" className="hover:text-black dark:hover:text-white transition-colors">Careers</Link></li>
+                  <li><Link href="/team" className="hover:text-black dark:hover:text-white transition-colors">Team</Link></li>
                 </ul>
               </div>
               <div className="space-y-4">
                 <h4 className="font-black text-zinc-900 dark:text-white text-lg">Contact</h4>
-                <ul className="space-y-3 font-medium text-[15px] text-zinc-500">
-                  <li className="hover:text-black dark:hover:text-white cursor-pointer transition-colors">Help & Support</li>
-                  <li className="hover:text-black dark:hover:text-white cursor-pointer transition-colors">Partner with us</li>
-                  <li className="hover:text-black dark:hover:text-white cursor-pointer transition-colors">Ride with us</li>
+                <ul className="space-y-3 font-medium text-[15px] text-zinc-500 flex flex-col">
+                  <li><Link href="/support" className="hover:text-black dark:hover:text-white transition-colors">Help & Support</Link></li>
+                  <li><Link href="/partner" className="hover:text-black dark:hover:text-white transition-colors">Partner with us</Link></li>
+                  <li><Link href="/ride" className="hover:text-black dark:hover:text-white transition-colors">Ride with us</Link></li>
                 </ul>
               </div>
             </div>
