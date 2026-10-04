@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { updateOrderStatus, getStoreOrders } from "./actions";
+import { updateOrderStatus, getStoreOrders, type OrderStatus } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -39,7 +39,7 @@ export function OrdersClient({ initialOrders }: { initialOrders: any[] }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleUpdate = async (orderId: string, status: string) => {
+  const handleUpdate = async (orderId: string, status: OrderStatus) => {
     setLoadingId(orderId);
     try {
       await updateOrderStatus(orderId, status);

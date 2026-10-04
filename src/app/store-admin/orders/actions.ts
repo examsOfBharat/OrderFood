@@ -21,7 +21,7 @@ export async function getStoreOrders() {
   return JSON.parse(JSON.stringify(orders));
 }
 
-type OrderStatus = "pending_payment" | "placed" | "accepted" | "preparing" | "out_for_delivery" | "ready_for_pickup" | "delivered" | "cancelled";
+export type OrderStatus = "pending_payment" | "placed" | "accepted" | "preparing" | "out_for_delivery" | "ready_for_pickup" | "delivered" | "cancelled";
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus) {
   const session = await auth();
